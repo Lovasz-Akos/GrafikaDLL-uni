@@ -1,0 +1,5 @@
+D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.dll
+D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.pdb
+D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csprojResolveAssemblyReference.cache
+D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.dll
+D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.pdb
