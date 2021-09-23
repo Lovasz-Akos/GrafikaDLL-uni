@@ -3,3 +3,9 @@ D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.pd
 D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csprojResolveAssemblyReference.cache
 D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.dll
 D:\Troll\2021_22 I  - BevGraf - DT\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.pdb
+D:\Repos\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.dll
+D:\Repos\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.pdb
+D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.AssemblyReference.cache
+D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.CoreCompileInputs.cache
+D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.dll
+D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.pdb
