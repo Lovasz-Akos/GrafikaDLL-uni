@@ -9,3 +9,9 @@ D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.AssemblyReference.cac
 D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.CoreCompileInputs.cache
 D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.dll
 D:\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.pdb
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.AssemblyReference.cache
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.csproj.CoreCompileInputs.cache
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.dll
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\obj\Debug\GrafikaDLL.pdb
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.dll
+C:\Users\akos4\Documents\Repos\GrafikaDLL\GrafikaDLL\bin\Debug\GrafikaDLL.pdb
