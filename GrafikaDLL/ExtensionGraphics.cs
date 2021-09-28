@@ -183,8 +183,8 @@ ELJÁRÁS_VÉGE;
             float x, y, d;
             x = 0;
             y = r;
-            d = 5 / 4 - r;
-            KorpontTukrozes(g, Pens.Black, x, y);
+            d = 4-r;
+            CirclePoint(g, pen, x, y);
             while (y > x)
             {
                 if (d < 0)
@@ -197,7 +197,7 @@ ELJÁRÁS_VÉGE;
                     y--;
                 }
                 x++;
-                KorpontTukrozes(g, Pens.Black, x, y);
+                CirclePoint(g, pen, x, y);
             }
         }
 
@@ -214,7 +214,7 @@ ELJÁRÁS_VÉGE;
          ELJÁRÁS_VÉGE;
         */
 
-        private static void KorpontTukrozes(this Graphics g, Pen S, float x, float y)
+        private static void CirclePoint(this Graphics g, Pen S, float x, float y)
         {
             g.DrawRectangle(S, x, y, 3, 3);
 
@@ -231,17 +231,6 @@ ELJÁRÁS_VÉGE;
             g.DrawRectangle(S, -x, y, 3, 3);
 
             g.DrawRectangle(S, -x, -y, 3, 3);
-
-
-            /*
-            DrawLineMidPoint(g, S, x, y, x, -y);
-
-            DrawLineMidPoint(g, S, -x, y, -x, -y);
-
-            DrawLineMidPoint(g, S, x, y, x, -y);
-
-            DrawLineMidPoint(g, S, -x, y, -x, -y);
-            */
         }
 
         public static void DrawCircle(this Graphics g, Color c1, Color c2, PointF C, float r)
