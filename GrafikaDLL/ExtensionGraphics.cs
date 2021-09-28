@@ -106,7 +106,17 @@ ELJÁRÁS_VÉGE;
             y = y2;
             for (int i = 0; i < dx; i++)
             {
-                g.DrawRectangle(Pens.Black, x, y, 3, 3);
+                g.DrawRectangle(pen, x, y, 3, 3);
+                if (d>0)
+                {
+                    y++;
+                    d = d + 2 * (dx - dy);
+                }
+                else
+                {
+                    d = d + 2 * dy;
+                }
+                x++;
             }
         }
         public static void DrawLineMidPoint(this Graphics g,
@@ -153,33 +163,7 @@ ELJÁRÁS_VÉGE;
         public static void DrawCircle(this Graphics g, Pen pen, PointF C, float r)
         {
 
-            /* ELJÁRÁS MP_KOR_V1(EGÉSZ R, SZIN S);
-             VÁLTOZÓK
-
-             EGÉSZ: X, Y;
-             VALÓS: D;
-             ALGORITMUS
-
-             X <- 0;
-             Y <- R;
-             D <- 5 / 4 - R;
-             KORPONT(X, Y, S);
-             CIKLUS_AMÍG(Y > X)
-
-             HA(D < 0) AKKOR
-
-                 D <- D + 2 * X + 3;
-             KÜLÖNBEN
-
-                 D < -D + 2 * (X - Y) + 5;
-             Y <- Y - 1;
-             HA_VÉGE;
-             X <- X + 1;
-             KORPONT(X, Y, S);
-             CIKLUS_VÉGE;
-             ELJÁRÁS_VÉGE;
-            */
-
+            /*
             float x, y, d;
             x = 0;
             y = r;
@@ -194,6 +178,27 @@ ELJÁRÁS_VÉGE;
                 else
                 {
                     d = d + 2 * (x - y) + 5;
+                    y--;
+                }
+                x++;
+                CirclePoint(g, pen, x, y);
+            }
+            */
+
+            float x, y, h;
+            x = 0;
+            y = r;
+            h = 1 - r;
+            CirclePoint(g, pen, x, y);
+            while (y>x)
+            {
+                if (h<0)
+                {
+                    h = h + 2 * x + 3;
+                }
+                else
+                {
+                    h = h + 2 * (x - y) + 5;
                     y--;
                 }
                 x++;
@@ -214,7 +219,7 @@ ELJÁRÁS_VÉGE;
          ELJÁRÁS_VÉGE;
         */
 
-        private static void CirclePoint(this Graphics g, Pen S, float x, float y)
+            private static void CirclePoint(this Graphics g, Pen S, float x, float y)
         {
             g.DrawRectangle(S, x, y, 3, 3);
 
