@@ -243,5 +243,104 @@ ELJÁRÁS_VÉGE;
 
         }
         #endregion
+
+        #region Clip
+        private const byte TOP = 8;     //1000
+        private const byte BOTTOM = 4;  //0100
+        private const byte LEFT = 2;    //0010
+        private const byte RIGHT = 1;   //0001
+
+        private static byte OutCode(Rectangle window, PointF p)
+        {
+            byte code = 0;
+            if (p.X < window.Left) code |= LEFT;
+            else if (p.X > window.Right) code |= RIGHT;
+            if (p.Y < window.Top) code |= TOP;
+            else if (p.Y > window.Bottom) code |= BOTTOM;
+            return code;
+        }
+
+        public static void Clip(this Graphics g, Pen pen,
+            Rectangle window, PointF p0, PointF p1)
+        {
+            byte code0 = OutCode(window, p0);
+            byte code1 = OutCode(window, p1);
+            bool accept = false;
+
+            while (true)
+            {
+                if ((code0 | code1) == 0)
+                {
+                    accept = true;
+                    break;
+                }
+                else if ((code0 & code1) != 0)
+                {
+                    break;
+                }
+                else
+                {
+                    byte code = code0 != 0 ? code0 : code1;
+                    float x = 0, y = 0;
+
+                    if ((code & TOP) != 0)
+                    {
+                        x = p0.X + (p1.X - p0.X) * (window.Top - p0.Y) / (p1.Y - p0.Y);
+                        y = window.Top;
+                    }
+                    else if ((code & BOTTOM) != 0)
+                    {
+                        x = p0.X + (p1.X - p0.X) * (window.Bottom - p0.Y) / (p1.Y - p0.Y);
+                        y = window.Bottom;
+                    }
+                    else if ((code & LEFT) != 0)
+                    {
+                        x = window.Left;
+                        y = p0.Y + (p1.Y - p0.Y) * (window.Left - p0.X) / (p1.X - p0.X);
+                    }
+                    else if ((code & RIGHT) != 0)
+                    {
+                        x = window.Right;
+                        y = p0.Y + (p1.Y - p0.Y) * (window.Right - p0.X) / (p1.X - p0.X);
+                    }
+
+                    if (code == code0)
+                    {
+                        p0.X = x; p0.Y = y;
+                        code0 = OutCode(window, p0);
+                    }
+                    else
+                    {
+                        p1.X = x; p1.Y = y;
+                        code1 = OutCode(window, p1);
+                    }
+                }
+            }
+
+            if (accept)
+                g.DrawLine(pen, p0, p1);
+        }
+        public static void Clip(this Graphics g, Pen pen,
+            Rectangle window, Line line)
+        {
+            g.Clip(pen, window, line.p0, line.p1);
+        }
+
+        public static void ClipToConvex(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            throw new NotImplementedException();
+        }
+        public static void ClipToConcave(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            throw new NotImplementedException();
+        }
+        public static void Clip(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            g.ClipToConcave(pen, window, line);
+        }
+        #endregion
     }
 }
