@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtensionBitmap.cs" />
+    <Compile Include="ExtensionColor.cs" />
     <Compile Include="ExtensionGraphics.cs" />
     <Compile Include="ExtensionMouseEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
