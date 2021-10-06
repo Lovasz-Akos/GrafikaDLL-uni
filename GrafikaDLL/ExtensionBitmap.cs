@@ -66,5 +66,30 @@ namespace GrafikaDLL
 
             }*/
         }
+
+        public static void FillStackFourway(this Bitmap bmp, Color background, Color fillColor, int x, int y)
+        {
+            int[] dx = new int[] { 0, 1, 0, -1 };
+            int[] dy = new int[] { 1, 0, -1, 0 };
+
+            Stack<Point> stack = new Stack<Point>();
+
+            stack.Push(new Point(x, y));
+            Point p;
+
+            while (stack.Count>0)
+            {
+                p = stack.Pop();
+
+                bmp.SetPixel(p.X, p.Y, fillColor);
+                for (int i = 0; i < 4; i++)
+                {
+                    if (bmp.GetPixel(p.X + dx[i], p.Y + dy[i]).IsTheSameAs(background))
+                    {
+                        stack.Push(new Point(p.X + dx[i], p.Y + dy[i]));
+                    }
+                }
+            }
+        }
     }
 }
