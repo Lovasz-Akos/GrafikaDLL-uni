@@ -49,7 +49,8 @@ namespace GrafikaDLL
 
         public static void FillRecursiveFourway(this Bitmap bmp, Color background, Color fillColor, int x, int y)
         {
-            if (bmp.GetPixel(x, y).IsTheSameAs(background))
+            throw new NotImplementedException();
+            /*if (bmp.GetPixel(x, y).IsTheSameAs(background))
             {
                 bmp.SetPixel(x, y, fillColor);
 
@@ -63,7 +64,7 @@ namespace GrafikaDLL
                 FillRecursiveFourway(bmp, background, fillColor, x + 1, y - 1);
                 FillRecursiveFourway(bmp, background, fillColor, x - 1, y - 1);
 
-            }
+            }*/
         }
     }
 }
