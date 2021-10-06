@@ -106,7 +106,17 @@ ELJÁRÁS_VÉGE;
             y = y2;
             for (int i = 0; i < dx; i++)
             {
-                g.DrawRectangle(Pens.Black, x, y, 3, 3);
+                g.DrawRectangle(pen, x, y, 3, 3);
+                if (d>0)
+                {
+                    y++;
+                    d = d + 2 * (dx - dy);
+                }
+                else
+                {
+                    d = d + 2 * dy;
+                }
+                x++;
             }
         }
         public static void DrawLineMidPoint(this Graphics g,
@@ -153,38 +163,12 @@ ELJÁRÁS_VÉGE;
         public static void DrawCircle(this Graphics g, Pen pen, PointF C, float r)
         {
 
-            /* ELJÁRÁS MP_KOR_V1(EGÉSZ R, SZIN S);
-             VÁLTOZÓK
-
-             EGÉSZ: X, Y;
-             VALÓS: D;
-             ALGORITMUS
-
-             X <- 0;
-             Y <- R;
-             D <- 5 / 4 - R;
-             KORPONT(X, Y, S);
-             CIKLUS_AMÍG(Y > X)
-
-             HA(D < 0) AKKOR
-
-                 D <- D + 2 * X + 3;
-             KÜLÖNBEN
-
-                 D < -D + 2 * (X - Y) + 5;
-             Y <- Y - 1;
-             HA_VÉGE;
-             X <- X + 1;
-             KORPONT(X, Y, S);
-             CIKLUS_VÉGE;
-             ELJÁRÁS_VÉGE;
-            */
-
+            /*
             float x, y, d;
             x = 0;
             y = r;
-            d = 5 / 4 - r;
-            KorpontTukrozes(g, Pens.Black, x, y);
+            d = 4-r;
+            CirclePoint(g, pen, x, y);
             while (y > x)
             {
                 if (d < 0)
@@ -197,7 +181,28 @@ ELJÁRÁS_VÉGE;
                     y--;
                 }
                 x++;
-                KorpontTukrozes(g, Pens.Black, x, y);
+                CirclePoint(g, pen, x, y);
+            }
+            */
+
+            float x, y, h;
+            x = 0;
+            y = r;
+            h = 1 - r;
+            CirclePoint(g, pen, x, y);
+            while (y>x)
+            {
+                if (h<0)
+                {
+                    h = h + 2 * x + 3;
+                }
+                else
+                {
+                    h = h + 2 * (x - y) + 5;
+                    y--;
+                }
+                x++;
+                CirclePoint(g, pen, x, y);
             }
         }
 
@@ -214,7 +219,7 @@ ELJÁRÁS_VÉGE;
          ELJÁRÁS_VÉGE;
         */
 
-        private static void KorpontTukrozes(this Graphics g, Pen S, float x, float y)
+            private static void CirclePoint(this Graphics g, Pen S, float x, float y)
         {
             g.DrawRectangle(S, x, y, 3, 3);
 
@@ -231,22 +236,110 @@ ELJÁRÁS_VÉGE;
             g.DrawRectangle(S, -x, y, 3, 3);
 
             g.DrawRectangle(S, -x, -y, 3, 3);
-
-
-            /*
-            DrawLineMidPoint(g, S, x, y, x, -y);
-
-            DrawLineMidPoint(g, S, -x, y, -x, -y);
-
-            DrawLineMidPoint(g, S, x, y, x, -y);
-
-            DrawLineMidPoint(g, S, -x, y, -x, -y);
-            */
         }
 
         public static void DrawCircle(this Graphics g, Color c1, Color c2, PointF C, float r)
         {
 
+        }
+        #endregion
+
+        #region Clip
+        private const byte TOP = 8;     //1000
+        private const byte BOTTOM = 4;  //0100
+        private const byte LEFT = 2;    //0010
+        private const byte RIGHT = 1;   //0001
+
+        private static byte OutCode(Rectangle window, PointF p)
+        {
+            byte code = 0;
+            if (p.X < window.Left) code |= LEFT;
+            else if (p.X > window.Right) code |= RIGHT;
+            if (p.Y < window.Top) code |= TOP;
+            else if (p.Y > window.Bottom) code |= BOTTOM;
+            return code;
+        }
+
+        public static void Clip(this Graphics g, Pen pen,
+            Rectangle window, PointF p0, PointF p1)
+        {
+            byte code0 = OutCode(window, p0);
+            byte code1 = OutCode(window, p1);
+            bool accept = false;
+
+            while (true)
+            {
+                if ((code0 | code1) == 0)
+                {
+                    accept = true;
+                    break;
+                }
+                else if ((code0 & code1) != 0)
+                {
+                    break;
+                }
+                else
+                {
+                    byte code = code0 != 0 ? code0 : code1;
+                    float x = 0, y = 0;
+
+                    if ((code & TOP) != 0)
+                    {
+                        x = p0.X + (p1.X - p0.X) * (window.Top - p0.Y) / (p1.Y - p0.Y);
+                        y = window.Top;
+                    }
+                    else if ((code & BOTTOM) != 0)
+                    {
+                        x = p0.X + (p1.X - p0.X) * (window.Bottom - p0.Y) / (p1.Y - p0.Y);
+                        y = window.Bottom;
+                    }
+                    else if ((code & LEFT) != 0)
+                    {
+                        x = window.Left;
+                        y = p0.Y + (p1.Y - p0.Y) * (window.Left - p0.X) / (p1.X - p0.X);
+                    }
+                    else if ((code & RIGHT) != 0)
+                    {
+                        x = window.Right;
+                        y = p0.Y + (p1.Y - p0.Y) * (window.Right - p0.X) / (p1.X - p0.X);
+                    }
+
+                    if (code == code0)
+                    {
+                        p0.X = x; p0.Y = y;
+                        code0 = OutCode(window, p0);
+                    }
+                    else
+                    {
+                        p1.X = x; p1.Y = y;
+                        code1 = OutCode(window, p1);
+                    }
+                }
+            }
+
+            if (accept)
+                g.DrawLine(pen, p0, p1);
+        }
+        public static void Clip(this Graphics g, Pen pen,
+            Rectangle window, Line line)
+        {
+            g.Clip(pen, window, line.p0, line.p1);
+        }
+
+        public static void ClipToConvex(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            throw new NotImplementedException();
+        }
+        public static void ClipToConcave(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            throw new NotImplementedException();
+        }
+        public static void Clip(this Graphics g, Pen pen,
+            PointF[] window, Line line)
+        {
+            g.ClipToConcave(pen, window, line);
         }
         #endregion
     }

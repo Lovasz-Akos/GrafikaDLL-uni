@@ -45,6 +45,7 @@
     <Compile Include="ExtensionColor.cs" />
     <Compile Include="ExtensionGraphics.cs" />
     <Compile Include="ExtensionMouseEventArgs.cs" />
+    <Compile Include="Line.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
