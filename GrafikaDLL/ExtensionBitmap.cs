@@ -23,7 +23,7 @@ namespace GrafikaDLL
             {
                 x += incX;
                 y += incY;
-                bmp.SetPixel((int)x,(int)y, color);
+                bmp.SetPixel((int)x, (int)y, color);
             }
         }
 
@@ -44,6 +44,25 @@ namespace GrafikaDLL
                         bmp.SetPixel(x, y, fillColor);
                     }
                 }
+            }
+        }
+
+        public static void FillRecursiveFourway(this Bitmap bmp, Color background, Color fillColor, int x, int y)
+        {
+            if (bmp.GetPixel(x, y).IsTheSameAs(background))
+            {
+                bmp.SetPixel(x, y, fillColor);
+
+                FillRecursiveFourway(bmp, background, fillColor, x + 1, y);
+                FillRecursiveFourway(bmp, background, fillColor, x - 1, y);
+                FillRecursiveFourway(bmp, background, fillColor, x, y + 1);
+                FillRecursiveFourway(bmp, background, fillColor, x, y - 1);
+
+                FillRecursiveFourway(bmp, background, fillColor, x + 1, y + 1);
+                FillRecursiveFourway(bmp, background, fillColor, x - 1, y + 1);
+                FillRecursiveFourway(bmp, background, fillColor, x + 1, y - 1);
+                FillRecursiveFourway(bmp, background, fillColor, x - 1, y - 1);
+
             }
         }
     }
