@@ -357,7 +357,16 @@ ELJÁRÁS_VÉGE;
         
         public static void DrawParametricCurve2D(this Graphics g, Pen pen, Func<double, double> X, Func<double, double> Y, double a, double b, int n = 500)
         {
-
+            double t = a;
+            double h = (b - a) / n;
+            Vector2 v0 = new Vector2(X(t), Y(t));
+            while (t < b)
+            {
+                t += h;
+                Vector2 v1 = new Vector2(X(t), Y(t));
+                g.DrawLine(pen, v0, v1);
+                v0 = v1;
+            }
         }
         #endregion
     }
