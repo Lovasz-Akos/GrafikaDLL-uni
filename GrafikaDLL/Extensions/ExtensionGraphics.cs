@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GrafikaDLL.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +10,13 @@ namespace GrafikaDLL
 {
     public static class ExtensionGraphics
     {
+        #region DrawLine
+        public static void DrawLine(this Graphics g, Pen pen, Vector2 v1, Vector2 v2)
+        {
+            g.DrawLine(pen, (float)v1.x, (float)v1.y, (float)v2.x, (float)v2.y);
+        }
+        #endregion
+        
         #region DrawLineDDA
         public static void DrawLineDDA(this Graphics g,
             Pen pen, float x1, float y1, float x2, float y2)
@@ -71,7 +79,7 @@ namespace GrafikaDLL
         }
         #endregion
 
-        #region DrawLineDDA
+        #region DrawLineMidPoint
         public static void DrawLineMidPoint(this Graphics g,
             Pen pen, float x1, float y1, float x2, float y2)
         {
@@ -340,6 +348,16 @@ ELJÁRÁS_VÉGE;
             PointF[] window, Line line)
         {
             g.ClipToConcave(pen, window, line);
+        }
+        #endregion
+
+        #region DrawParametricCurve2D
+        //public delegate double RtoR(double x);
+        //public delegate double R2toR(double x, double y);
+        
+        public static void DrawParametricCurve2D(this Graphics g, Pen pen, Func<double, double> X, Func<double, double> Y, double a, double b, int n = 500)
+        {
+
         }
         #endregion
     }
