@@ -45,6 +45,8 @@
     <Compile Include="Extensions\ExtensionColor.cs" />
     <Compile Include="Extensions\ExtensionGraphics.cs" />
     <Compile Include="Extensions\ExtensionMouseEventArgs.cs" />
+    <Compile Include="Hermite.cs" />
+    <Compile Include="HermiteArc.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

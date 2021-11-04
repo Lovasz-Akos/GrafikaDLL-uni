@@ -11,12 +11,13 @@ namespace GrafikaDLL
     public static class ExtensionGraphics
     {
         #region DrawLine
-        public static void DrawLine(this Graphics g, Pen pen, Vector2 v1, Vector2 v2)
+        public static void DrawLine(this Graphics g, Pen pen,
+            Vector2 v1, Vector2 v2)
         {
             g.DrawLine(pen, (float)v1.x, (float)v1.y, (float)v2.x, (float)v2.y);
         }
         #endregion
-        
+
         #region DrawLineDDA
         public static void DrawLineDDA(this Graphics g,
             Pen pen, float x1, float y1, float x2, float y2)
@@ -79,53 +80,11 @@ namespace GrafikaDLL
         }
         #endregion
 
-        #region DrawLineMidPoint
+        #region DrawLineMiPoint
         public static void DrawLineMidPoint(this Graphics g,
             Pen pen, float x1, float y1, float x2, float y2)
         {
-            /*
-             VÁLTOZÓK        
-        EGÉSZ: D, DY, DX, X, Y, I;
-    ALGORITMUS
-        DX <- X1 - X0;
-        DY <- Y1 - Y0;
-        D <- 2 * DY - DX;
-        X <- X1;
-        Y <- Y1;
-        CIKLUS I <- 1..DX
-            PIXEL(X, Y, S);
-            HA (D > 0) AKKOR
-                Y <- Y + 1;
-                D <- D + 2 * (DY - DX);
-            KÜLÖNBEN
-                D <- D + 2 * DY;
-            HA_VÉGE;
-            X <- X + 1;
-        CIKLUS_VÉGE;
-ELJÁRÁS_VÉGE;
-
-             */
-
-            float d, dy, dx, x, y;
-            dx = x2 - x1;
-            dy = y2 - y1;
-            d = 2 * dy - dx;
-            x = x2;
-            y = y2;
-            for (int i = 0; i < dx; i++)
-            {
-                g.DrawRectangle(pen, x, y, 3, 3);
-                if (d>0)
-                {
-                    y++;
-                    d = d + 2 * (dx - dy);
-                }
-                else
-                {
-                    d = d + 2 * dy;
-                }
-                x++;
-            }
+            throw new NotImplementedException();
         }
         public static void DrawLineMidPoint(this Graphics g,
             Pen pen, PointF p1, PointF p2)
@@ -141,6 +100,15 @@ ELJÁRÁS_VÉGE;
             Color c1, Color c2, PointF p1, PointF p2)
         {
             g.DrawLineMidPoint(c1, c2, p1.X, p1.Y, p2.X, p2.Y);
+        }
+        #endregion
+
+        #region DrawPoint
+        public static void DrawPoint(this Graphics g, Pen pen, Brush brush,
+            Vector2 v, float r)
+        {
+            g.FillEllipse(brush, (float)(v.x - r), (float)(v.y - r), 2 * r, 2 * r);
+            g.DrawEllipse(pen, (float)(v.x - r), (float)(v.y - r), 2 * r, 2 * r);
         }
         #endregion
 
@@ -171,84 +139,52 @@ ELJÁRÁS_VÉGE;
         public static void DrawCircle(this Graphics g, Pen pen, PointF C, float r)
         {
 
-            /*
-            float x, y, d;
-            x = 0;
-            y = r;
-            d = 4-r;
-            CirclePoint(g, pen, x, y);
-            while (y > x)
-            {
-                if (d < 0)
-                {
-                    d = d + 2 * x + 3;
-                }
-                else
-                {
-                    d = d + 2 * (x - y) + 5;
-                    y--;
-                }
-                x++;
-                CirclePoint(g, pen, x, y);
-            }
-            */
-
-            float x, y, h;
-            x = 0;
-            y = r;
-            h = 1 - r;
-            CirclePoint(g, pen, x, y);
-            while (y>x)
-            {
-                if (h<0)
-                {
-                    h = h + 2 * x + 3;
-                }
-                else
-                {
-                    h = h + 2 * (x - y) + 5;
-                    y--;
-                }
-                x++;
-                CirclePoint(g, pen, x, y);
-            }
         }
-
-        /* ELJÁRÁS KORPONT(SZIN S, EGÉSZ X, EGÉSZ Y);
-         ALGORITMUS
-         PIXEL(X, Y, S);
-         PIXEL(X, -Y, S);
-         PIXEL(-X, Y, S);
-         PIXEL(-X, -Y, S);
-         PIXEL(X, Y, S);
-         PIXEL(X, -Y, S);
-         PIXEL(-X, Y, S);
-         PIXEL(-X, -Y, S);
-         ELJÁRÁS_VÉGE;
-        */
-
-            private static void CirclePoint(this Graphics g, Pen S, float x, float y)
-        {
-            g.DrawRectangle(S, x, y, 3, 3);
-
-            g.DrawRectangle(S, x, -y, 3, 3);
-
-            g.DrawRectangle(S, -x, y, 3, 3);
-
-            g.DrawRectangle(S, -x, -y, 3, 3);
-
-            g.DrawRectangle(S, x, y, 3, 3);
-
-            g.DrawRectangle(S, x, -y, 3, 3);
-
-            g.DrawRectangle(S, -x, y, 3, 3);
-
-            g.DrawRectangle(S, -x, -y, 3, 3);
-        }
-
         public static void DrawCircle(this Graphics g, Color c1, Color c2, PointF C, float r)
         {
 
+        }
+        #endregion
+
+        #region DrawParametricCurve2D
+        //public delegate double RtoR(double x); //valós változós valós értékű
+        //public delegate double R2toR(double x, double y); //két valós változós valós értékű
+        public static void DrawParametricCurve2D(this Graphics g, Pen pen,
+            Func<double, double> X, Func<double, double> Y,
+            double a, double b, int n = 500)
+        {
+            double t = a;
+            double h = (b - a) / n;
+            Vector2 v0 = new Vector2(X(t), Y(t));
+            while (t < b)
+            {
+                t += h;
+                Vector2 v1 = new Vector2(X(t), Y(t));
+                g.DrawLine(pen, v0, v1);
+                v0 = v1;
+            }
+        }
+        #endregion
+
+        #region DrawHemiteArc
+        public static void DrawHermiteArc(this Graphics g, Pen pen,
+            Vector2 p0, Vector2 p1, Vector2 t0, Vector2 t1)
+        {
+            g.DrawParametricCurve2D(pen,
+                t => Hermite.H0(t) * p0.x + Hermite.H1(t) * p1.x +
+                     Hermite.H2(t) * t0.x + Hermite.H3(t) * t1.x,
+                t => Hermite.H0(t) * p0.y + Hermite.H1(t) * p1.y +
+                     Hermite.H2(t) * t0.y + Hermite.H3(t) * t1.y,
+                     0.0, 1.0);
+        }
+        public static void DrawHermiteArc(this Graphics g, Pen pen, HermiteArc arc)
+        {
+            g.DrawParametricCurve2D(pen,
+                t => Hermite.H0(t) * arc.p0.x + Hermite.H1(t) * arc.p1.x +
+                     Hermite.H2(t) * arc.t0.x * arc.weight + Hermite.H3(t) * arc.t1.x * arc.weight,
+                t => Hermite.H0(t) * arc.p0.y + Hermite.H1(t) * arc.p1.y +
+                     Hermite.H2(t) * arc.t0.y * arc.weight + Hermite.H3(t) * arc.t1.y * arc.weight,
+                     0.0, 1.0);
         }
         #endregion
 
@@ -348,25 +284,6 @@ ELJÁRÁS_VÉGE;
             PointF[] window, Line line)
         {
             g.ClipToConcave(pen, window, line);
-        }
-        #endregion
-
-        #region DrawParametricCurve2D
-        //public delegate double RtoR(double x);
-        //public delegate double R2toR(double x, double y);
-        
-        public static void DrawParametricCurve2D(this Graphics g, Pen pen, Func<double, double> X, Func<double, double> Y, double a, double b, int n = 500)
-        {
-            double t = a;
-            double h = (b - a) / n;
-            Vector2 v0 = new Vector2(X(t), Y(t));
-            while (t < b)
-            {
-                t += h;
-                Vector2 v1 = new Vector2(X(t), Y(t));
-                g.DrawLine(pen, v0, v1);
-                v0 = v1;
-            }
         }
         #endregion
     }
