@@ -1,5 +1,4 @@
-﻿using GrafikaDLL.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -13,6 +12,11 @@ namespace GrafikaDLL
         #region DrawLine
         public static void DrawLine(this Graphics g, Pen pen,
             Vector2 v1, Vector2 v2)
+        {
+            g.DrawLine(pen, (float)v1.x, (float)v1.y, (float)v2.x, (float)v2.y);
+        }
+        public static void DrawLine(this Graphics g, Pen pen,
+            Vector4 v1, Vector4 v2)
         {
             g.DrawLine(pen, (float)v1.x, (float)v1.y, (float)v2.x, (float)v2.y);
         }
@@ -166,6 +170,48 @@ namespace GrafikaDLL
         }
         #endregion
 
+        #region DrawParametricCurve3D
+        public static void DrawParametricCurve3D(this Graphics g, Pen pen,
+            Func<double, double> X, Func<double, double> Y, Func<double, double> Z,
+            Matrix4 projection,
+            double a, double b, 
+            int n = 500)
+        {
+            g.DrawParametricCurve3D(pen, X, Y, Z, projection, a, b, new Vector2(0.0, 0.0), n);
+        }
+        public static void DrawParametricCurve3D(this Graphics g, Pen pen,
+            Func<double, double> X, Func<double, double> Y, Func<double, double> Z,
+            Matrix4 projection,
+            double a, double b,
+            Vector2 translate2D,
+            int n = 500)
+        {            
+            g.DrawParametricCurve3D(pen, X, Y, Z, 
+                Matrix4.GetIdentity(), projection, a, b, translate2D, n);
+        }
+        public static void DrawParametricCurve3D(this Graphics g, Pen pen,
+            Func<double, double> X, Func<double, double> Y, Func<double, double> Z,
+            Matrix4 transformation,
+            Matrix4 projection,
+            double a, double b,
+            Vector2 translate2D,
+            int n = 500)
+        {
+            double t = a;
+            double h = (b - a) / n;
+            Vector4 v0 = new Vector4(X(t), Y(t), Z(t));
+            while (t < b)
+            {
+                t += h;
+                Vector4 v1 = new Vector4(X(t), Y(t), Z(t));
+                Vector2 pv0 = (projection * (transformation * v0)) + translate2D;
+                Vector2 pv1 = (projection * (transformation * v1)) + translate2D;
+                g.DrawLine(pen, pv0, pv1);
+                v0 = v1;
+            }
+        }
+        #endregion
+
         #region DrawHemiteArc
         public static void DrawHermiteArc(this Graphics g, Pen pen,
             Vector2 p0, Vector2 p1, Vector2 t0, Vector2 t1)
@@ -177,7 +223,8 @@ namespace GrafikaDLL
                      Hermite.H2(t) * t0.y + Hermite.H3(t) * t1.y,
                      0.0, 1.0);
         }
-        public static void DrawHermiteArc(this Graphics g, Pen pen, HermiteArc arc)
+        public static void DrawHermiteArc(this Graphics g, Pen pen,
+            HermiteArc arc)
         {
             g.DrawParametricCurve2D(pen,
                 t => Hermite.H0(t) * arc.p0.x + Hermite.H1(t) * arc.p1.x +
@@ -185,6 +232,79 @@ namespace GrafikaDLL
                 t => Hermite.H0(t) * arc.p0.y + Hermite.H1(t) * arc.p1.y +
                      Hermite.H2(t) * arc.t0.y * arc.weight + Hermite.H3(t) * arc.t1.y * arc.weight,
                      0.0, 1.0);
+        }
+        #endregion
+
+        #region DrawParametricSurface
+        public static void DrawParametricSurfaceWithDots(this Graphics g)
+        { throw new NotImplementedException(); }
+        public static void DrawParametricSurfaceWithDotsAndNormals(this Graphics g)
+        { throw new NotImplementedException(); }
+        public static void DrawParametricSurfaceWithParameterLines(this Graphics g,
+            Pen pen,
+            Func<double, double, double> X, Func<double, double, double> Y, Func<double, double, double> Z,
+            double a, double b,
+            double c, double d,
+            Matrix4 transformation,
+            Matrix4 projection,
+            Vector2 translate2D,
+            int n0 = 25, int n1 = 25)
+        {
+            double u = c;
+            double h0 = (d - c) / n0;
+            while(u <= d)
+            {
+                g.DrawParametricCurve3D(pen,
+                    t => X(t, u), t => Y(t, u), t => Z(t, u),
+                    transformation, projection,
+                    a, b,
+                    translate2D);
+                u += h0;
+            }
+
+            double T = a;
+            double h1 = (b - a) / n1;
+            while(T < b)
+            {
+                g.DrawParametricCurve3D(pen,
+                    U => X(T, U), U => Y(T, U), U => Z(T, U),
+                    transformation, projection,
+                    c, d,
+                    translate2D);
+                T += h1;
+            }
+        }
+        #endregion
+
+        #region DrawBRep
+        private static void DrawBRepWithDots(this Graphics g)
+        {
+            throw new NotImplementedException();
+        }
+        private static void DrawBRepWithEdges(this Graphics g, Pen pen,
+            BRep model,
+            Matrix4 transformation,
+            Matrix4 projection,
+            Vector2 translate2D)
+        {
+            foreach (Edge edge in model.edges)
+            {
+                Vector2 pv0 = (projection * (transformation * edge.v0)) + translate2D;
+                Vector2 pv1 = (projection * (transformation * edge.v1)) + translate2D;
+                g.DrawLine(pen, pv0, pv1);
+            }
+        }
+        private static void DrawBRepWithTriangles(this Graphics g)
+        {
+            throw new NotImplementedException();
+        }
+        public static void DrawObjectBRepWithEdges(this Graphics g,
+            ObjectBRep objBRep,
+            Matrix4 projection,
+            Vector2 translate2D)
+        {
+            g.DrawBRepWithEdges(new Pen(objBRep.color), objBRep.model,
+                objBRep.transformation, projection, translate2D);
         }
         #endregion
 

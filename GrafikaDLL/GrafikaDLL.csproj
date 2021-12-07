@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BRep.cs" />
+    <Compile Include="Edge.cs" />
     <Compile Include="Extensions\ExtensionBitmap.cs" />
     <Compile Include="Extensions\ExtensionColor.cs" />
     <Compile Include="Extensions\ExtensionGraphics.cs" />
@@ -48,8 +50,13 @@
     <Compile Include="Hermite.cs" />
     <Compile Include="HermiteArc.cs" />
     <Compile Include="Line.cs" />
-    <Compile Include="Vector2.cs" />
+    <Compile Include="Matrix4.cs" />
+    <Compile Include="ModelFileType.cs" />
+    <Compile Include="ObjectBRep.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Triangle.cs" />
+    <Compile Include="Vector2.cs" />
+    <Compile Include="Vector4.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

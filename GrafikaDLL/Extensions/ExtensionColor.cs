@@ -11,7 +11,9 @@ namespace GrafikaDLL
     {
         public static bool IsTheSameAs(this Color color, Color other)
         {
-            return color.R == other.R && color.G == other.G && color.B == other.B;
+            return color.R == other.R &&
+                   color.G == other.G &&
+                   color.B == other.B;
         }
     }
 }
