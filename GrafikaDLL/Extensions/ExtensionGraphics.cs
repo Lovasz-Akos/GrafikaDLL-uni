@@ -137,6 +137,15 @@ namespace GrafikaDLL
             if (closed)
                 g.DrawLineDDA(colors[colors.Length - 1], colors[0], points[points.Length - 1], points[0]);
         }
+        public static void FillTriangle(this Graphics g, Color color, Vector4 v0, Vector4 v1, Vector4 v2)
+        {
+            g.FillPolygon(new SolidBrush(color),
+                new PointF[] {
+                    new PointF((float)v0.x, (float)v0.y),
+                    new PointF((float)v1.x, (float)v1.y),
+                    new PointF((float)v2.x, (float)v2.y)
+                });
+        }
         #endregion
 
         #region DrawCircle
@@ -174,7 +183,7 @@ namespace GrafikaDLL
         public static void DrawParametricCurve3D(this Graphics g, Pen pen,
             Func<double, double> X, Func<double, double> Y, Func<double, double> Z,
             Matrix4 projection,
-            double a, double b, 
+            double a, double b,
             int n = 500)
         {
             g.DrawParametricCurve3D(pen, X, Y, Z, projection, a, b, new Vector2(0.0, 0.0), n);
@@ -185,8 +194,8 @@ namespace GrafikaDLL
             double a, double b,
             Vector2 translate2D,
             int n = 500)
-        {            
-            g.DrawParametricCurve3D(pen, X, Y, Z, 
+        {
+            g.DrawParametricCurve3D(pen, X, Y, Z,
                 Matrix4.GetIdentity(), projection, a, b, translate2D, n);
         }
         public static void DrawParametricCurve3D(this Graphics g, Pen pen,
@@ -235,6 +244,54 @@ namespace GrafikaDLL
         }
         #endregion
 
+        #region DrawBezier3Curve
+        public static void DrawBezier3Arc(this Graphics g, Pen pen,
+            Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            g.DrawParametricCurve2D(pen,
+                t => Bezier3.B0(t) * p0.x + Bezier3.B1(t) * p1.x +
+                     Bezier3.B2(t) * p2.x + Bezier3.B3(t) * p3.x,
+                t => Bezier3.B0(t) * p0.y + Bezier3.B1(t) * p1.y +
+                     Bezier3.B2(t) * p2.y + Bezier3.B3(t) * p3.y,
+                     0.0, 1.0);
+        }
+        public static void DrawBSpline(this Graphics g, Pen pen,
+            Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            g.DrawParametricCurve2D(pen,
+                t => BSpline.N0(t) * p0.x + BSpline.N1(t) * p1.x +
+                     BSpline.N2(t) * p2.x + BSpline.N3(t) * p3.x,
+                t => BSpline.N0(t) * p0.y + BSpline.N1(t) * p1.y +
+                     BSpline.N2(t) * p2.y + BSpline.N3(t) * p3.y,
+                     0.0, 1.0);
+        }
+        public static void DrawBezier(this Graphics g, Pen pen,
+            List<Vector2> V)
+        {
+            double t = 0;
+            double h = 1.0 / 500.0;
+            Vector2 v0 = new Vector2(0, 0);
+            int n = V.Count - 1;
+            for (int i = 0; i <= n; i++)
+            {
+                v0.x += Bezier.B(i, n, t) * V[i].x;
+                v0.y += Bezier.B(i, n, t) * V[i].y;
+            }
+            while (t < 1)
+            {
+                t += h;
+                Vector2 v1 = new Vector2(0, 0);
+                for (int i = 0; i <= n; i++)
+                {
+                    v1.x += Bezier.B(i, n, t) * V[i].x;
+                    v1.y += Bezier.B(i, n, t) * V[i].y;
+                }
+                g.DrawLine(pen, v0, v1);
+                v0 = v1;
+            }
+        }
+        #endregion
+
         #region DrawParametricSurface
         public static void DrawParametricSurfaceWithDots(this Graphics g)
         { throw new NotImplementedException(); }
@@ -252,7 +309,7 @@ namespace GrafikaDLL
         {
             double u = c;
             double h0 = (d - c) / n0;
-            while(u <= d)
+            while (u <= d)
             {
                 g.DrawParametricCurve3D(pen,
                     t => X(t, u), t => Y(t, u), t => Z(t, u),
@@ -264,7 +321,7 @@ namespace GrafikaDLL
 
             double T = a;
             double h1 = (b - a) / n1;
-            while(T < b)
+            while (T < b)
             {
                 g.DrawParametricCurve3D(pen,
                     U => X(T, U), U => Y(T, U), U => Z(T, U),
@@ -294,11 +351,72 @@ namespace GrafikaDLL
                 g.DrawLine(pen, pv0, pv1);
             }
         }
-        private static void DrawBRepWithTriangles(this Graphics g)
+        public static void DrawObjectBRepWithTriangles(this Graphics g,
+            ObjectBRep objBRep,
+            Matrix4 projection,
+            Vector4 viewVector,
+            Vector2 translate2D)
         {
-            throw new NotImplementedException();
+            foreach (Triangle triangle in objBRep.model.triangles)
+            {
+                Vector4 tv0 = objBRep.transformation * triangle.v0;
+                Vector4 tv1 = objBRep.transformation * triangle.v1;
+                Vector4 tv2 = objBRep.transformation * triangle.v2;
+                Triangle transformed = new Triangle(tv0, tv1, tv2);
+                if (transformed.IsVisible(viewVector))
+                {
+                    Vector4 pv0 = projection * tv0 + translate2D;
+                    Vector4 pv1 = projection * tv1 + translate2D;
+                    Vector4 pv2 = projection * tv2 + translate2D;
+                    g.DrawLine(new Pen(objBRep.color), pv0, pv1);
+                    g.DrawLine(new Pen(objBRep.color), pv1, pv2);
+                    g.DrawLine(new Pen(objBRep.color), pv2, pv0);
+                }
+            }
+        }
+        public static void FillObjectBRepWithTriangles(this Graphics g,
+            ObjectBRep objBRep,
+            Matrix4 projection,
+            Vector4 viewVector,
+            Vector2 translate2D)
+        {
+            //Kigyűjti a látható háromszögeket
+            //rendezi őket a 3szögek súlyponjának z koordinátája szerint
+            //utána megjelenít, mint eddig
+
+            foreach (Triangle triangle in objBRep.model.triangles)
+            {
+                Vector4 tv0 = objBRep.transformation * triangle.v0;
+                Vector4 tv1 = objBRep.transformation * triangle.v1;
+                Vector4 tv2 = objBRep.transformation * triangle.v2;
+                Triangle transformed = new Triangle(tv0, tv1, tv2);
+                if (transformed.IsVisible(viewVector)) //ez a kigyűjtés feltétele
+                {
+                    //ez már a megjelenítés
+                    Vector4 pv0 = projection * tv0 + translate2D;
+                    Vector4 pv1 = projection * tv1 + translate2D;
+                    Vector4 pv2 = projection * tv2 + translate2D;
+                    double colorIntensity = (transformed.NormalAtV0 * viewVector) /
+                        (transformed.NormalAtV0.Length * viewVector.Length);
+                    Color fillColor = Color.FromArgb((int)(colorIntensity * objBRep.color.R),
+                                                     (int)(colorIntensity * objBRep.color.G),
+                                                     (int)(colorIntensity * objBRep.color.B));
+                    g.FillTriangle(fillColor, pv0, pv1, pv2);
+                    g.DrawLine(new Pen(fillColor), pv0, pv1);
+                    g.DrawLine(new Pen(fillColor), pv1, pv2);
+                    g.DrawLine(new Pen(fillColor), pv2, pv0);
+                }
+            }
         }
         public static void DrawObjectBRepWithEdges(this Graphics g,
+            ObjectBRep objBRep,
+            Matrix4 projection,
+            Vector2 translate2D)
+        {
+            g.DrawBRepWithEdges(new Pen(objBRep.color), objBRep.model,
+                objBRep.transformation, projection, translate2D);
+        }
+        public static void DrawObjectBRepWithNormals(this Graphics g,
             ObjectBRep objBRep,
             Matrix4 projection,
             Vector2 translate2D)

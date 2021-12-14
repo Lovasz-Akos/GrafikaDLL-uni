@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bezier.cs" />
+    <Compile Include="Bezier3.cs" />
     <Compile Include="BRep.cs" />
+    <Compile Include="BSpline.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Extensions\ExtensionBitmap.cs" />
     <Compile Include="Extensions\ExtensionColor.cs" />

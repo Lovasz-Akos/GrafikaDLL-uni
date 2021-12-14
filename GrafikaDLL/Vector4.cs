@@ -60,5 +60,25 @@ namespace GrafikaDLL
         {
             return new Vector2(v.x, v.y);
         }
+
+        public static double operator * (Vector4 a, Vector4 b)
+        {
+            return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
+        public static Vector4 operator^(Vector4 a, Vector4 b)
+        {
+            return new Vector4(a.y * b.z - a.z * b.y,
+                               a.z * b.x - a.x * b.z,
+                               a.x * b.y - a.y * b.x);
+        }
+        public double Length
+        {
+            get { return Math.Sqrt(x * x + y * y + z * z); }
+        }
+        public void Nomalize()
+        {
+            double len = Length;
+            x /= len; y /= len; z /= len;
+        }
     }
 }
