@@ -1,1 +1,2 @@
-GrafikaDLL
+# GrafikaDLL
+BevGraf órai gyártású DLL
